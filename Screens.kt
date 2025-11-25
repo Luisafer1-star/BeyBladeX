@@ -9,7 +9,7 @@ import androidx.compose.foundation.lazy.itemsIndexed
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.automirrored.filled.ArrowBack
 import androidx.compose.material3.*
-import androidx.compose.runtime.*
+import androidx.compose.runtime.* 
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.layout.ContentScale
@@ -26,8 +26,7 @@ import com.example.beyapp.samplePieceExamples
 import androidx.compose.ui.text.style.TextOverflow
 
 
-
-// PANTALLA: PantallaInicioSesion
+// PANTALLA: PantallaInicioSesion (CON VALIDACIÓN IMPLEMENTADA)
 
 @Composable
 fun PantallaInicioSesion(navController: NavController) {
@@ -40,30 +39,84 @@ fun PantallaInicioSesion(navController: NavController) {
             var usuario by remember { mutableStateOf("") }
             var contrasena by remember { mutableStateOf("") }
 
+            // NUEVOS ESTADOS PARA GESTIONAR ERRORES
+            var errorMessage by remember { mutableStateOf("") }
+            var isError by remember { mutableStateOf(false) }
+
+
             Text("Inicio de Sesión", style = MaterialTheme.typography.headlineLarge)
             Spacer(modifier = Modifier.height(24.dp))
 
+            // Campo de Usuario
             TextField(
                 value = usuario,
-                onValueChange = { usuario = it },
+                onValueChange = {
+                    usuario = it
+                    if (isError) isError = false // Limpia el error al escribir
+                },
                 label = { Text("Usuario") },
+                isError = isError, // Aplica el estado de error
                 modifier = Modifier.fillMaxWidth()
             )
             Spacer(modifier = Modifier.height(16.dp))
+
+            // Campo de Contraseña
             TextField(
                 value = contrasena,
-                onValueChange = { contrasena = it },
+                onValueChange = {
+                    contrasena = it
+                    if (isError) isError = false // Limpia el error al escribir
+                },
                 label = { Text("Contraseña") },
                 visualTransformation = PasswordVisualTransformation(),
+                isError = isError, // Aplica el estado de error
                 modifier = Modifier.fillMaxWidth()
             )
-            Spacer(modifier = Modifier.height(24.dp))
+            Spacer(modifier = Modifier.height(8.dp)) //Se reduce el espacio para poner el mensaje
 
+            // MENSAJE DE ERROR
+            if (errorMessage.isNotEmpty()) {
+                Text(
+                    text = errorMessage,
+                    color = MaterialTheme.colorScheme.error,
+                    style = MaterialTheme.typography.bodySmall,
+                    modifier = Modifier.fillMaxWidth()
+                )
+            }
+
+            Spacer(modifier = Modifier.height(16.dp))
+
+            // Botón de Ingreso Principal con Lógica de Validación
             Button(onClick = {
-                navController.navigate("pantalla_menu")
+                // Reinicia el estado de error
+                isError = false
+                errorMessage = ""
+
+                // 1. VALIDACIÓN BÁSICA: CAMPOS VACÍOS
+                if (usuario.isBlank() || contrasena.isBlank()) {
+                    isError = true
+                    errorMessage = "Por favor, complete ambos campos."
+                    return@Button 
+                }
+
+                // 2. VALIDACIÓN DE CREDENCIALES (Usuario y Contraseña de Prueba)
+                val userValido = "admin"
+                val passValida = "12345" // Una contraseña de prueba simple
+
+                if (usuario == userValido && contrasena == passValida) {
+                    // CREDENCIALES CORRECTAS: NAVEGAR
+                    navController.navigate("pantalla_menu") {
+                        popUpTo("pantalla_inicio_sesion") { inclusive = true } // Evita volver al login con el botón de atrás
+                    }
+                } else {
+                    // CREDENCIALES INCORRECTAS
+                    isError = true
+                    errorMessage = "Usuario o contraseña incorrectos. Intente de nuevo."
+                }
             }) {
                 Text("Iniciar Sesión")
             }
+
 
             Spacer(modifier = Modifier.height(24.dp))
             Text("O inicia sesión con:", style = MaterialTheme.typography.bodyLarge)
@@ -98,7 +151,7 @@ fun PantallaInicioSesion(navController: NavController) {
 }
 
 
-// PANTALLA: PantallaSeleccionUsuario
+// PANTALLA: PantallaSeleccionUsuario (SIN CAMBIOS)
 
 @Composable
 fun PantallaSeleccionUsuario(navController: NavController) {
@@ -126,7 +179,7 @@ fun PantallaSeleccionUsuario(navController: NavController) {
 }
 
 
-// PANTALLA: PantallaMenu
+// PANTALLA: PantallaMenu (SIN CAMBIOS)
 
 @Composable
 fun PantallaMenu(navController: NavController) {
@@ -183,7 +236,7 @@ fun PantallaMenu(navController: NavController) {
 }
 
 
-// PANTALLA: PantallaTiposBeyblade (Diseño de Tarjeta con Imagen)
+// PANTALLA: PantallaTiposBeyblade (SIN CAMBIOS)
 
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
@@ -242,7 +295,7 @@ fun PantallaTiposBeyblade(navController: NavController) {
 }
 
 
-// PANTALLA: PantallaTiposLanzamiento (Diseño de Tarjeta con Imagen y Descripción)
+// PANTALLA: PantallaTiposLanzamiento (SIN CAMBIOS)
 
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
@@ -301,7 +354,7 @@ fun PantallaTiposLanzamiento(navController: NavController) {
 }
 
 
-// PANTALLA: PantallaTiposPiezas (Diseño de Tarjeta con Imagen)
+// PANTALLA: PantallaTiposPiezas (SIN CAMBIOS)
 
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
@@ -364,8 +417,7 @@ fun PantallaTiposPiezas(navController: NavController) {
 }
 
 
-
-// PANTALLA: PantallaEjemplosBey (Ejemplos de Beyblade)
+// PANTALLA: PantallaEjemplosBey (SIN CAMBIOS)
 
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
@@ -428,7 +480,7 @@ fun PantallaEjemplosBey(navController: NavController, tipoId: Int) {
 }
 
 
-// PANTALLA: PantallaEjemplosPiezas (Ejemplos de Piezas)
+// PANTALLA: PantallaEjemplosPiezas (SIN CAMBIOS)
 
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
@@ -489,4 +541,3 @@ fun PantallaEjemplosPiezas(navController: NavController, piezaId: Int) {
         }
     }
 }
-
